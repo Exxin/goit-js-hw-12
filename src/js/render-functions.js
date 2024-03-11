@@ -1,56 +1,42 @@
-import iziToast from 'izitoast';
-import SimpleLightbox from 'simplelightbox';
-import 'izitoast/dist/css/iziToast.min.css';
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
-const loader = document.getElementById('loader');
-const gallery = document.getElementById('gallery');
-const lightbox = new SimpleLightbox('.gallery a');
-const loadMoreBtn = document.getElementById('loadMoreBtn');
-
-export function renderGallery(images, isFirstLoad) {
-    if (isFirstLoad) {
-        loader.style.display = 'none';
-    }
-
-    if (images.length === 0) {
-        iziToast.info({
-            title: 'Info',
-            message: 'Sorry, there are no images matching your search query. Please try again!'
-        });
-        hideLoadMoreButton();
-        return;
-    }
-
-    images.forEach(image => {
-        const card = document.createElement('div');
-        card.classList.add('card');
-        card.innerHTML = `
-            <a href="${image.largeImageURL}" data-lightbox="gallery">
-                <img src="${image.webformatURL}" alt="${image.tags}">
+const list = document.querySelector('.todo-list');
+export default function createMarkup(images){
+  const markup = images
+    .map(
+        ({
+            webformatURL,
+            largeImageURL,
+            tags,
+            likes,
+            views,
+            comments,
+            downloads,
+        }) => {
+            return  `<li class="photo-main-list">
+            <a class="galery-link"  href="${largeImageURL}">
+            <img class="photo" width="360" height="200" src="${webformatURL}" alt="${tags}" />
             </a>
-            <p>Likes: ${image.likes}</p>
-            <p>Views: ${image.views}</p>
-            <p>Comments: ${image.comments}</p>
-            <p>Downloads: ${image.downloads}</p>
-        `;
-        gallery.appendChild(card);
-    });
-
-    lightbox.refresh();
+              <ul class='list-menu'>
+                <li class='description'>
+                  <h3 class='title'>Likes</h3>
+                  <p class='datas'>${likes}</p>
+                </li>
+                <li class='description'>
+                  <h3 class='title'>Views</h3>
+                  <p class='datas'>${views}</p>
+                </li>
+                <li class='description'>
+                  <h3 class='title'>Comments</h3>
+                  <p class='datas'>${comments}</p>
+                </li>
+                <li class='description'>
+                  <h3 class='title'>Downloads</h3>
+                  <p class='datas'>${downloads}</p>
+                </li>
+              </ul>
+            </li>`;
+        }
+    )
+    .join('');
+    list.insertAdjacentHTML('beforeend', markup)
 }
 
-export function hideLoadMoreButton() {
-    loadMoreBtn.style.display = 'none';
-}
-
-export function showLoadMoreButton() {
-    loadMoreBtn.style.display = 'block';
-}
-
-export function showEndOfCollectionMessage() {
-    iziToast.info({
-        title: 'Info',
-        message: "We're sorry, but you've reached the end of search results."
-    });
-}
